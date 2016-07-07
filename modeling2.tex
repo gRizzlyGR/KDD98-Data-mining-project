@@ -1,0 +1,200 @@
+	\chapter{Modeling}
+In questo capitolo verrà mostrata quale tecnica di modeling è stata adoperata per conseguire gli obiettivi preposti.
+
+\section{Tecnica di modeling}
+La tecnica utilizzata prende il nome di \textbf{IB1}, che si ispira al K-Nearest Neighbors (KNN).
+
+\section{Rappresentazione del modello}
+
+L'algoritmo fu proposto nel 1991 da \texttt{David W. Aha, Dennis Kibler} e \texttt{Mark K. Albert} del \emph{Department of Information and Computer Science} dell'Università della California come membro degli algoritmi di \textbf{Instance-based learning}.
+
+\subsection{Instance-based learning}
+L'instance-based learning (talvolta chiamato \emph{memory-based learning}) è una famiglia di algoritmi di apprendimento che, invece di fare una generalizzazione esplicita, confronta le nuove istanze del problema con le istanze viste in fase di training, che sono state salvate in memoria. L'instance-based learning è un tipo di \emph{lazy learning} (apprendimento pigro).
+
+
+Viene chiamato instance-based perché costruisce ipotesi direttamente dalle stesse istanze di training. Questo significa che la complessità delle ipotesi può crescere con i dati: nel caso peggiore, un'ipotesi è una lista di $ n $ elementi di training. Un vantaggio che l'instance-based learning ha rispetto ad altri metodi di machine learning è la sua capacità di adattare il suo modello a dati non visti in precedenza: un instance-based learner può semplicemente memorizzare la nuova istanza o scartarne una vecchia.
+
+L'output principale degli algoritmi IBL è il \emph{concept description} (descrizione del concetto) o semplicemente \emph{concetto}. Si tratta di una funzione che mappa le istanze con le classi: data un'istanza estratta dallo spazio delle istanze, si genera una classificazione, che è il valore predetto per l'attributo target.
+Un concetto instance-based contiene un insieme di istanze memorizzate e, possibilmente, alcune informazioni relative alle passate perfomance durante la classificazione (per esempio, il numero di predizioni di classificazione giuste e sbagliate). Questo insieme di istanze può cambiare dopo che viene elaborata ogni istanza di training. In ogni caso, gli algoritmi IBL non costruiscono delle \emph{concept descritption} estensionali. Invece essi sono definiti da come le funzioni di similarità e classificazioni scelte dall'algoritmo usino l'insieme corrente di istanze salvate. Queste funzioni sono due delle tre componenti principali del framework seguente che descrive gli algoritmi IBL:
+
+\begin{enumerate}
+\item \emph{Funzione di similarità}: questa calcola la similarità tra un'istanza di training $ i $ e le istanze nel concetto. Le similarità sono espresse come numeri.
+\item \emph{Funzione di classificazione}: Questo riceve i risultati della funzione di similarità ed i record delle perfomrnce della classificazione di istanze nel concetto. Esso fornisce una classifizione per $ i $.
+\item \emph{Concept Descriptor Updater}: questo tiene traccia delle performance delle classificazione e decide quali istanze includere nel concetto. Gli input includono $ i $, i risultati di similarità, i risultati di classificazione e il \emph{concept description} corrente. Esso fornisce una modifica alla descrizione del concetto.
+\end{enumerate}
+
+Le funzioni di similarità e classificazione determinano come l'insieme delle istanze salvate nella descrizione del concetto viene usato per predire i valori dell'attributo di classe. Di conseguenza, le descrizioni del concetto IBL non solo contengono un insieme di istanze, ma includono anche queste due funzioni.
+Gli algoritmi IBL assumono che istanze simili abbiano classificazioni simili. Questo porta il loro bias locale a classificare le nuove istanze secondo la classe del loro \emph{vicino} più simile. Essi assumono anche che, senza sapere nulla a priori, gli attributi avranno uguale rilevanza per le decisioni di classificazione (cioè avranno lo stesso peso nella funzione di similarità). Questo bias si concretizza normalizzando il range di ogni attributo dei possibili valori.
+
+Gli algoritmi IBL si differenziano dalla maggior parte degli altri algoritmi di apprendimento: essi non costruiscono astrazioni esplicite come gli alberi di decisione o le regole. La maggior parte degli algoritmi di apprendimento derivano le generalizzazioni dalle istanze nel momento in cui sono elaborate ed usano semplici procedure di matching per classificare successivamente tali istanze. Questo mostra come lo scopo della generalizzazione si consolidi a tempo di presenatazione delle istanze. Gli algoritmi IBL lavorano relativamente poco a tempo di presentazione visto che non memorizzazo generalizzazioni esplicite. Ciò nonostante, il carico di lavoro è più alto con le successive instanze da classificare, quando calcolano le similarità delle istanze salvate con le nuove istanze da elaborare. Questo evita la necessità, per gli algoritmi IBL, di memorizzare rigide generalizzazioni nelle descrizioni dei concetti, che possono richiedere ingenti costi di aggiornamento per tener conto degli errori di predizione.
+
+\subsection{L'algoritmo IB1}
+L'algoritmo IB1, che è uno degli algorimi IBL più semplici, sfrutta una funzione di similarità così definita:
+$$ Similarity(x, y)=\sqrt{\sum\limits_{i=1}^n f(x_i, y_i) } $$
+
+dove le istanze sono descritte da $ n $ attributi. Si definisce $ f(x_i, y_i) = (x_i - y_i)^2 $ per gli attributi numerici e $ f(x_i, y_i) = (x_i \neq y_i) $ per gli attributi booleani e categorici. Si assume che i \emph{missing values} sono completamente dissimili dal valore preso in considerazione al momento dell'elaborazione. Se mancano entrambi, allora $ f(x_i, y_i) $ produce 1. IB1 è uguale all'algoritmo \emph{nearest neighbors} tranne per il fatto che esso normalizza i range degli attributi, elabora le istanze in maniera incrementale ed adopera un meccanismo semplice per tollerare i valori mancanti.
+
+
+\begin{algorithm}[!htb]
+\caption{L'algoritmo IB1}
+\begin{algorithmic}[1]
+	\State $CD \gets 0$
+  \ForAll{$x \in$ Training Set}
+  	
+    \ForAll{$y \in CD$}
+    	\State $Sim[y] \gets Similarity(x, y)$
+        \State $y_{max} \gets $ qualche $ y \in \  CD $ con $ Sim[y] $ più grande
+    \EndFor
+    
+    \If{$class(x) = class(y_{max})$}
+    	\State classificazione $\gets$ \textbf{corretta}
+    \Else
+    	\State classificazione $\gets$ \textbf{sbagliata}
+    \EndIf
+    
+    \State $CD \gets CD \cup \{x\} $
+  \EndFor
+\end{algorithmic}
+\end{algorithm}
+
+L'algoritmo IB2, descritto dal \texttt{Algoritmo 2}, è identico a IB1 tranne per il fatto che esso salva solo le istanze non classificate correttamente, garantendo quindi vincoli meno stringenti per quanto riguarda il salvataggio delle istanze, ma è più sensibile al rumore presente nei dati:
+
+\begin{algorithm}[!htb]
+\caption{L'algoritmo IB2}
+\begin{algorithmic}[1]
+	\State $CD \gets 0$
+  \ForAll{$x \in$ Training Set}
+  	
+    \ForAll{$y \in CD$}
+    	\State $Sim[y] \gets Similarity(x, y)$
+        \State $y_{max} \gets $ qualche $ y \in \  CD $ con $ Sim[y] $ più grande
+    \EndFor
+    
+    \If{$class(x) = class(y_{max})$}
+    	\State classificazione $\gets$ \textbf{corretta}
+    \Else
+    	\State classificazione $\gets$ \textbf{sbagliata}
+        \State $CD \gets CD \cup \{x\} $
+    \EndIf
+  \EndFor
+\end{algorithmic}
+\end{algorithm}
+
+L'algoritmo IB3, descritto da \texttt{Algoritmo 3}, è un'estensione di IB2 che adotta un metodo di raccolta di evidenze \emph(wait and see), cioè si mette in attesa per determinare quali delle istanze salvate ci si aspetta abbiano performance migliori durante la classificazione. La sua funzione di similarità è identica a quella di IB2. La funzione di classificazione e l'algoritmo di aggiornamento differiscono per quanto segue:
+\begin{enumerate}
+	\item IB3 mantiene un record di classificazione (cioè, il numero dei tentativi di classificazione corretta e sbagliata) per ogni istanza salvata. Un record di classificazione sintetizza la performance della classificazione di un'istanza su quelle che si presentano successivamente e suggerisce quanto bene si comporterà in futuro.
+    \item IB3 utilizza un test per determinare quali istanze sono dei buoni classificatori e quali si ipotizza siano rumorose. Le prime sono usate in seguito per classificare le istanze prese in esame. Le ultime sono scartate dalla concept description.
+\end{enumerate}
+
+Detto in altri termini, IB3 mira a migliorare la tolleranza ai dati rumorosi: le istanze che hanno uno storico delle classificazioni sufficientemente negativo vengono dimenticate, solo le istanze che hanno uno storico delle classificazioni positivo sono usate nella classificazione.
+
+\begin{algorithm}[!htb]
+\caption{L'algoritmo IB3}
+\begin{algorithmic}[1]
+	\State $CD \gets 0$
+  \ForAll{$x \in$ Training Set}
+  	
+    \ForAll{$y \in CD$}
+    	\State $Sim[y] \gets Similarity(x, y)$
+    \EndFor
+    
+    \If{$ \exists \{y \in CD \ | \ acceptable(y)\} $}
+    	\State $y_{max} \gets $ qualche $y \in CD$ accettabile con la massima $Sim[y]$
+    \Else
+    	\State $i \gets$ un valore random nell'intervallo $[1, |CD|]$
+        \State $y_{max} \gets $ qualche $y \in CD$ che sia l'$i$-esima istanza più simile a $x$
+    \EndIf
+    
+    \If{$class(x) \neq class(y_{max})$}
+    	\State classificazione $\gets$ \textbf{corretta}
+    \Else
+    	\State classificazione $\gets$ \textbf{sbagliata}
+        \State $CD \gets CD \cup \{x\} $
+    \EndIf
+    
+    \ForAll{$y \in CD$}
+		
+        \If {$Sim[y] \geq Sim[y_{max}]$}
+        	\State Aggiorna il record di classificazione di $y$
+            
+            \If{il record di classificazione di $y$ è povero}
+            	\State $CD \gets CD - \{y\}$
+        	\EndIf
+        \EndIf
+        
+    \EndFor
+  \EndFor
+\end{algorithmic}
+\end{algorithm}
+
+\pagebreak
+
+\section{Costruzione del modello}
+I parametri per la costruzione del modello con l'algoritmo IB1 sono i seguenti:
+\begin{center}
+\begin{tabular}{|r|l|}
+	\hline
+	\textbf{KNN} & \texttt{1} \\ \hline
+	\textbf{crossValidate} & \texttt{False} \\ \hline
+	\textbf{debug} & \texttt{False} \\ \hline
+	\textbf{distanceWeighting} & \texttt{No distance weighting} \\ \hline
+	\textbf{meanSquared} & \texttt{False} \\ \hline
+	\textbf{nearestNeighbourAlgorithm} & \texttt{LinearNNSearch} \\ \hline
+	\textbf{windowSize} & \texttt{0} \\ \hline
+\end{tabular}
+\end{center}
+
+Inoltre, la configurazione del modello ha previsto:
+\begin{itemize}
+\item Per il sampling l'algoritmo \textbf{Resample}.
+\item Per la feature selection l'algoritmo \textbf{InfoGainAttributeEval}.
+\end{itemize}
+
+\begin{verbatim}
+=== Run information ===
+
+Scheme:weka.classifiers.lazy.IBk -K 1 -W 0 -A "weka.core.neighboursearch.
+       LinearNNSearch -A \"weka.core.EuclideanDistance -R first-last\""
+Relation:     cup98LRN
+Instances:    9541
+Attributes:   220
+[list of attributes omitted]
+Test mode:10-fold cross-validation
+
+=== Classifier model (full training set) ===
+
+IB1 instance-based classifier
+using 1 nearest neighbour(s) for classification
+
+
+\end{verbatim}
+
+\section{Valutazione del modello}
+
+I risultati ottenuti da Weka sono:
+
+\begin{verbatim}
+=== Summary ===
+
+Correctly Classified Instances        6689               70.108  %
+Incorrectly Classified Instances      2852               29.892  %
+Kappa statistic                          0.4022
+Mean absolute error                      0.299 
+Root mean squared error                  0.5467
+Relative absolute error                 59.7925 %
+Root relative squared error            109.3362 %
+Total Number of Instances             9541     
+
+=== Detailed Accuracy By Class ===
+
+          TP Rate   FP Rate   Precision   Recall  F-Measure   ROC Area  Class
+          0.643     0.241      0.728     0.643     0.683      0.702    0
+          0.759     0.357      0.68      0.759     0.717      0.702    1
+W. Avg    0.701     0.299      0.704     0.701     0.7        0.702
+
+=== Confusion Matrix ===
+
+    a    b   <-- classified as
+ 3072 1703 |    a = 0
+ 1149 3617 |    b = 1
+\end{verbatim}

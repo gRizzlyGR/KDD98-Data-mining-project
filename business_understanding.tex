@@ -1,0 +1,69 @@
+\chapter[Business Understanding]{Business\\Understanding}
+\label{ch:bisund}
+In questo capitolo verrà affrontata la fase di Business Understanding, con l'individuazione degli obiettivi di business e le risorse per conseguirli.
+
+\section{Background}
+La competizione è supportata da un'organizzazione no-profit statunitense che fornisce programmi e servizi per i veterani americani che riportano ferite o malattie alla spina dorsale. Con un database interno di oltre 13 milioni di donatori, essa è anche uno dei più grandi organizzatori di raccolte fondi per corrispondenza nella nazione.
+
+Nel 1997 è stata rinnovata la richiesta di fondi a chi aveva già fatto una donazione in precedenza. La mailing è stata mandata ad un totale di 3.5 milioni di donatori che erano presenti nel database a partire da giugno dello stesso anno.
+
+Un gruppo che è di particolare interesse per questa organizzazione riguarda i \emph{Lapsed Donors}. Queste sono persone che hanno donato l'ultima volta 13 o 24 mesi fa. Rappresentano un gruppo importante, visto che più tempo passa da quando qualcuno fa una donazione, meno probabile sarà che lo farà di nuovo. Di conseguenza, ricatturare questi ex donatori è un aspetto importante per non vanificare gli sforzi della raccolta fondi messa in piedi dall'organizzazione.
+
+\subsection{Risorse}
+
+La popolazione per questa analisi riguarderà i Lapsed Donor che hanno ricevuto una lettera di sollecito nel giugno '97. Perciò il dataset d'analisi contiene un sottoinsieme dell'universo complessivo destinatario del mailing.
+
+Il file comprende 95412 soggetti destinatari del mailing, con i rispondenti allo stesso segnalati con un flag nel campo \tb.
+
+Il computer a disposizione è un HP Pavillion DV5-1105el con processore AMD Turion Dual-Core da 2,1 GHz e 4 GB di RAM. Il sistema operativo è Windows 8 Pro 64-bit.
+
+Il software utilizzato nella sperimentazione è \textbf{Weka} (\textit{Waikato Environment for Knowledge Analysis}).
+
+Il personale che lavora al progetto è formato solo dall'esaminando.
+
+\subsection{Vincoli}
+I detentori del data set hanno posto alcune condizioni per il suo utilizzo:
+\begin{itemize}
+	\item Il nome dell'organizzazione no-profit che ha fornito i dati deve rimanere anonima nel caso tali dati vengano utilizzati in futuro per nuove analisi.
+	
+	\item L'utente che sfrutterà i dati dovrà notificare ai dententori stessi:
+	 	\begin{itemize}
+	 	
+		\item \texttt{Ismail Parsa (\href{mailto:iparsa@epsilon.com}{iparsa@epsilon.com})} e
+
+		\item \texttt{Ken Howes (\href{mailto:khowes@epsilon.com}{khowes@epsilon.com})}
+		
+		\end{itemize}
+	nel caso vengano prodotti risultati, grafici, tabelle, ecc. ed inviare una nota che includa una sintesi del risultato finale.
+
+	\item Gli autori di articoli pubblicati e/o non pubblicati che usano il data set dovranno avvertire le persone suddette ed inviare una copia del loro lavoro.
+\end{itemize}
+
+La durata stimata del progetto è di 4 settimane.
+
+\subsection{Presupposti}
+Stando alle condizioni dettate sopra, i dati sono disponibili ai fini del progetto.
+
+\section{Obiettivi di business}
+Si vuole prevedere se un individuo effettuerà un'altra donazione in futuro.
+
+\section{Criteri di successo}
+Il processo KDD terminerà con successo se si riuscirà a costruire il miglior modello di predizione in termini di maggior copertura di istanze rispetto agli algoritmi standard, ottenuto confrontando varie tecniche di modellazione.
+
+\section{Task di data mining}
+Il task è di tipo \emph{predittivo} per l'attributo \tb{}; si tratterà di \emph{classificazione}, con lo scopo di etichettare i donatori contattati come possibili rispondenti o meno alla richiesta di fondi.
+
+\section{Glossario}
+\begin{itemize}
+	\item Attributo = Campo = Variabile = Feature = Colonna
+	\item Attributo target = Attributo di classe
+	\item Osservazione = Esempio = Istanza = Riga
+\end{itemize}
+
+\section{Analisi costi-benefici}
+I costi riguarderanno il tempo e le risorse computazionali utilizzati per perseguire gli obiettivi di business. I benefici riguarderanno invece l'individuazione di possibili rispondenti al sollecito della donazione che, appunto, daranno fondi all'associazione.
+
+\section{Piano di progetto}
+La maggior parte delle risorse temporali sono state utilizzate per lo studio e la preparazione del dataset per le successive elaborazioni, interessando quindi le fasi dal \nameref{ch:bisund}, \nameref{ch:datund} e \nameref{ch:datprep}, mentre le risorse computazionali hanno riguardato principalmente le fasi di \nameref{ch:model} ed \nameref{ch:eval} ed ancora la fase di \nameref{ch:datprep}. Si stima un tempo per l'ultimazione del progetto di 4 settimane.
+
+
